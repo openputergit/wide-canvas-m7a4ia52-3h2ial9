@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Analytics Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+        }
+        .feature-card {
+            transition: transform 0.2s;
+        }
+        .feature-card:hover {
+            transform: translateY(-2px);
+        }
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        tr:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+        @media (max-width: 768px) {
+            .table-container {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen p-4 md:p-6">
+        <!-- Header with Filters -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                <h1 class="text-2xl font-bold text-gray-800">Call Analytics</h1>
+                <div class="flex flex-wrap gap-3">
+                    <input type="search" placeholder="Search calls..." class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <select class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option>All Sentiments</option>
+                        <option>Positive</option>
+                        <option>Neutral</option>
+                        <option>Negative</option>
+                    </select>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        <i class="bi bi-filter mr-2"></i>More Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium text-gray-500">Total Calls</span>
+                    <i class="bi bi-telephone text-blue-500"></i>
+                </div>
+                <p class="text-2xl font-bold mt-2">2,453</p>
+                <span class="text-sm text-green-500">↑ 12% from last week</span>
+            </div>
+            <!-- More analytics cards -->
+        </div>
+
+        <!-- Call Records Table -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="table-container">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-6 py-4 text-left font-semibold text-gray-600">Call ID</th>
+                            <th class="px-6 py-4 text-left font-semibold text-gray-600">Agent</th>
+                            <th class="px-6 py-4 text-left font-semibold text-gray-600">Customer</th>
+                            <th class="px-6 py-4 text-left font-semibold text-gray-600">Duration</th>
+                            <th class="px-6 py-4 text-left font-semibold text-gray-600">Sentiment</th>
+                            <th class="px-6 py-4 text-left font-semibold text-gray-600">Talk Ratio</th>
+                            <th class="px-6 py-4 text-left font-semibold text-gray-600">Silence %</th>
+                            <th class="px-6 py-4 text-left font-semibold text-gray-600">Keywords</th>
+                            <th class="px-6 py-4 text-left font-semibold text-gray-600">Outcome</th>
+                        </tr>
+                    </thead>
+                    <tbody id="callTableBody">
+                        <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="px-6 py-4 border-t flex items-center justify-between">
+                <div class="flex gap-2">
+                    <button class="px-3 py-1 border rounded-lg hover:bg-gray-50">Previous</button>
+                    <button class="px-3 py-1 border rounded-lg hover:bg-gray-50">Next</button>
+                </div>
+                <span class="text-sm text-gray-600">Showing 1-10 of 2,453</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample call data
+        const calls = [
+            {
+                id: "CALL-001",
+                agent: "John Smith",
+                customer: "Sarah Wilson",
+                duration: "05:23",
+                sentiment: "Positive",
+                talkRatio: "65:35",
+                silence: "15%",
+                keywords: ["pricing", "upgrade", "satisfied"],
+                outcome: "Resolved"
+            },
+            // Add more sample data as needed
+        ];
+
+        function renderCalls() {
+            const tbody = document.getElementById('callTableBody');
+            tbody.innerHTML = calls.map(call => `
+                <tr class="border-t hover:bg-gray-50">
+                    <td class="px-6 py-4">
+                        <a href="#" class="text-blue-600 hover:underline">${call.id}</a>
+                    </td>
+                    <td class="px-6 py-4">${call.agent}</td>
+                    <td class="px-6 py-4">${call.customer}</td>
+                    <td class="px-6 py-4">${call.duration}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-xs ${
+                            call.sentiment === 'Positive' ? 'bg-green-100 text-green-800' :
+                            call.sentiment === 'Negative' ? 'bg-red-100 text-red-800' :
+                            'bg-yellow-100 text-yellow-800'
+                        }">${call.sentiment}</span>
+                    </td>
+                    <td class="px-6 py-4">${call.talkRatio}</td>
+                    <td class="px-6 py-4">${call.silence}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex gap-1">
+                            ${call.keywords.map(keyword => 
+                                `<span class="px-2 py-1 bg-gray-100 rounded-full text-xs">${keyword}</span>`
+                            ).join('')}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-xs ${
+                            call.outcome === 'Resolved' ? 'bg-green-100 text-green-800' :
+                            call.outcome === 'Escalated' ? 'bg-red-100 text-red-800' :
+                            'bg-yellow-100 text-yellow-800'
+                        }">${call.outcome}</span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Initialize the table
+        document.addEventListener('DOMContentLoaded', renderCalls);
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
